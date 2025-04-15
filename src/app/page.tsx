@@ -1,48 +1,75 @@
 'use client';
-import { useState } from "react";
-import Image from "next/image";
+import React, {useState} from 'react'
+import {intsructionsSteps} from '@/helpers/data'
 
 export default function Home() {
   const [showMessage, setShowMessage] = useState(false);
-
+  const [inputValue, setInputValue] = useState('');
+  const [isPalindrome, setIsPalindrome] = useState<boolean | null>(null);
+  
+  const checkPalindrome = (str: string) => {
+    const cleanedStr = str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    return cleanedStr === cleanedStr.split('').reverse().join('');
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    setShowMessage(false)
+  };
+  
   const handleClick = () => {
+    const result = checkPalindrome(inputValue);
+    setIsPalindrome(result);
     setShowMessage(true);
   };
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-    
-
-        {/* Custom Input and Button */}
-        <div className="flex flex-col items-center gap-4 mt-8">
-          <input
-            type="text"
-            placeholder="Enter something..."
-            className="border border-gray-300 rounded px-4 py-2 w-64"
-          />
-          <button
-            onClick={handleClick}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
-          >
-            Submit
-          </button>
-          {showMessage && (
-            <p className="text-green-600 font-semibold text-lg">
-              Anue Interview Task
+    <main>
+      <section aria-labelledby="polindrome" className="palindrome">
+        <div className="palindrome__content">
+          <div className="palindrome__intro">
+            <h1 className="palindrome__title" id="polindrome">
+              Palindrome Checker
+            </h1>
+            <p className="palindrome__description">
+              This is a simple palindrome checker.
             </p>
-          )}
+            <p className="palindrome__description-extra">
+              * A palindrome is a word, phrase, number, or other sequence of characters that reads the same forward and backward (ignoring spaces, punctuation, and capitalization).
+            </p>
+          </div>
+          <div className="palindrome__instructions">
+            <h2 className="palindrome__subtitle">
+              Instructions
+            </h2>
+            <ul className="palindrome__step">
+              {intsructionsSteps.map((step) => (
+                <li key={step.id} className="palindrome__step-item">
+                  {step.title}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-
-      </main>
-    </div>
+        <div className="palindrome__form">
+          <div className="palindrome__input-group">
+            <input type="text" onChange={handleInputChange} placeholder="Enter text" className="palindrome__input"/>
+            <button type="button" onClick={handleClick} className="palindrome__button">
+              Check
+            </button>
+          </div>
+          <div className="palindrome__result-wrapper">
+            {showMessage && isPalindrome !== null && (
+              <p
+                className={`palindrome__result ${isPalindrome ? 'success' : 'error'}`}
+              >
+                {isPalindrome
+                  ? "This is a palindrome"
+                  : "Unfortunately, this is not a palindrome"}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
